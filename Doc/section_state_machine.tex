@@ -1,0 +1,33 @@
+\newpage
+\section{Finite State Machine}
+The game has to have structered rules to decide who of the players has won a game. For example it is obligatory to know exactly when a score is counted and how the movement changes when the ball hits a wall or one of the players panels. Furthermore it has to be clear how the game continues after scoring a point. \newline 
+For the last point there are some different possbilities. The ball could either go "through" the goal and appear out of the other one, it could rebound or it respawns at another point near the center of the field. In the presented design the last option was chosen. This happened for no special reason but it seemed to be the most balanced possibility. The ball is spawning at the exact center of the x-axis. The y-coordinates are variating to avoid determinism during the game.  
+
+\subsection{Finite State Machine - Interface}
+The interface of the FSM as it is shown in \ref{interface\_fsm} consists of 4 input and 4 output signals. 
+\begin{figure}[h]
+	\includegraphics{images/block\_fsm.pdf}
+
+\caption{Interface of the FSM module}
+\label{interface\_fsm}
+\end{figure}
+
+Firstly there are two input signals y\_paddle\_left and y\_paddle\_right. These are the vertical paddle positions. The other two input signals are the x and the y position of the ball. Via these values it is possible to detect a collision between the ball and one of the paddles.\newline 
+
+The output signals which are generated in this module are a paddle\_hit and a scored signal for the left and the right side. In general this module has to detect if one of the paddles is hit or a point is scored. When one of these events happen it have to provide a signal to the top module.
+
+
+\subsection{Finite State Machine - Blockdiagram}
+
+The ball can actually be in one of two non-volatile states: Either it is moving left- or rightwards\ref{fsm}. But before a game can start the ball needs to be spawn. Therefore is the startng state the so called spawn\_phase.
+\begin{figure}[h]
+	\includegraphics{images/state\_machine.pdf}
+
+\caption{Diagram of the FSM}
+\label{fsm}
+\end{figure}
+As soon as the ball either gets close enough to one of the paddles or to one of the sidewalls, a transition happens. If it is close enough to one of the paddles the corresponding paddle\_hit signal is driven. In the upper module the moving direction of the ball is changed. On the other hand when one of the side walls is hit by the ball a score has to be counted. For this issue the design gets into the goal\_hit state. Now the corresponding scored signal is driven. Furthermore the ball has to be spawned again. Because of that there is a transition back to the spawn\_phase. The current moving direction is kept.
+
+
+
+\end{document}
